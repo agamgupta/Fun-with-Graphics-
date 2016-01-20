@@ -1,4 +1,4 @@
-// Reference taken from the starter code "BasicShapes.js" provide by Professor J.T
+// Reference taken from the starter code "BasicShapes.js" provide by Professor J.Tumbling
 
 // Vertex shader program - To convert our math to data on the coordinate axis.
 var VSHADER_SOURCE = 
@@ -107,11 +107,11 @@ function initVertexBuffer(gl) {
   // Copy all shapes into one big Float32 array:
   var colorShapes = new Float32Array(mySiz);
   // Copy them:  remember where to start for each shape:
-  sphStart1 = 0;
+  sphStartbase = 0;
+  sphStarthead =  0;
   for(i=0,j=0; j< sphVerts.length; i++,j++) {
     colorShapes[i] = sphVerts[j];
   }
-
 /*
   cylStart = 0;             // we stored the cylinder first.
   for(i=0,j=0; j< cylVerts.length; i++,j++) {
@@ -291,9 +291,9 @@ function makeSphere() {
                       // (choose odd # or prime# to avoid accidental symmetry)
   var sliceVerts  = 27; // # of vertices around the top edge of the slice
                       // (same number of vertices on bottom of slice, too)
-  var topColr = new Float32Array([0.7, 0.7, 0.7]);  // North Pole: light gray
-  var equColr = new Float32Array([0.3, 0.7, 0.3]);  // Equator:    bright green
-  var botColr = new Float32Array([0.9, 0.9, 0.9]);  // South Pole: brightest gray.
+  var topColr = new Float32Array([0.0, 0.0, 0.1]);  // North Pole: light gray
+  var equColr = new Float32Array([0.0, 0.7, 0.3]);  // Equator:    bright green
+  var botColr = new Float32Array([0.0, 0.0, 0.1]);  // South Pole: brightest gray.
   var sliceAngle = Math.PI/slices;  // lattitude angle spanned by one slice.
 
   // Create a (global) array to hold this sphere's vertices:
@@ -404,26 +404,28 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
       // Draw just the sphere's vertices
   gl.drawArrays(gl.TRIANGLE_STRIP,        // use this drawing primitive, and
-                sphStart1/floatsPerVertex, // start at this vertex number, and 
+                sphStartbase/floatsPerVertex, // start at this vertex number, and 
                 sphVerts.length/floatsPerVertex); // draw this many vertices.
-modelMatrix.setTranslate( 0.0, 0.1, 0.0); // 'set' means DISCARD old matrix,
+ 
+
+ // Making the head of the snowman
+ modelMatrix.setTranslate( 0.0, 0.2, 0.0); // 'set' means DISCARD old matrix,
               // (drawing axes centered in CVV), and then make new
               // drawing axes moved to the lower-left corner of CVV.
   modelMatrix.scale(1,1,-1);              // convert to left-handed coord sys
                                           // to match WebGL display canvas.
-  modelMatrix.scale(0.1, 0.1, 0.1);
+  modelMatrix.scale(0.2, 0.2, 0.2);
               // Make it smaller:
-  modelMatrix.rotate(currentAngle, 0, 1, 0);  // Spin on XY diagonal axis
+  modelMatrix.rotate(-1* currentAngle, 0, 1, 0);  // Spin on Y diagonal axis
   // Drawing:   
   // Pass our current matrix to the vertex shaders:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
       // Draw just the sphere's vertices
   gl.drawArrays(gl.TRIANGLE_STRIP,        // use this drawing primitive, and
-                sphStart1/floatsPerVertex, // start at this vertex number, and 
-                sphVerts.length/floatsPerVertex); 
+                sphStarthead/floatsPerVertex, // start at this vertex number, and 
+                sphVerts.length/floatsPerVertex); // draw this many vertices.
 
 }
-
 
 // Last time that this function was called:  (used for animation timing)
 var g_last = Date.now();
